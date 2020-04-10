@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"sort"
+	"time"
 )
 
 /*
@@ -320,6 +321,7 @@ func (d *DoubleArrayTrie) build_(keys []string, vals interface{}, needSort bool)
 
 // 底层构建方法
 func (d *DoubleArrayTrie) build(keys []string) error {
+	start := time.Now()
 	if len(keys) == 0 {
 		log.Fatal("empty keys")
 		return errors.New("empty keys")
@@ -348,9 +350,11 @@ func (d *DoubleArrayTrie) build(keys []string) error {
 	log.Println("first begin = ", begin)
 	d.base[0] = begin // 应该为1
 	log.Println("build done...")
+	log.Println("cost:", time.Since(start).Milliseconds(), "ms")
 	log.Println("DAT:", d)
 	// 压缩数组
 	d.shrink()
+	log.Println("DAT after shrink:", d)
 	return nil
 }
 
@@ -438,14 +442,7 @@ func (d *DoubleArrayTrie) ExactMatchSearch(key string) (res int, ok bool) {
 func (d *DoubleArrayTrie) String() string {
 	size := fmt.Sprint(d.size)
 	alSize := fmt.Sprint(d.allocSize)
-	return `
-	[
-		size : ` + size + `,
-		allocSize : ` + alSize + `,
-		keySize: ` + fmt.Sprint(d.keySize) + `,
-		progress: ` + fmt.Sprint(d.progress) + `,	
-	]
-           `
+	return `[size : ` + size + `,allocSize : ` + alSize + `,keySize: ` + fmt.Sprint(d.keySize) + `,progress: ` + fmt.Sprint(d.progress) + `]`
 }
 
 /*
